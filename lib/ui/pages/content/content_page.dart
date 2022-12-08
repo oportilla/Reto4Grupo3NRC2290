@@ -4,6 +4,9 @@ import 'package:f_gps_tracker/ui/controllers/location.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../domain/models/location.dart';
+import '../../controllers/gps.dart';
+
 class ContentPage extends GetView<LocationController> {
   late final GpsController gpsController = Get.find();
 
@@ -28,9 +31,18 @@ class ContentPage extends GetView<LocationController> {
                     child: ElevatedButton(
                       onPressed: () async {
                         // TODO: 1. Obten la ubicacion actual con gpsController.currentLocation
+                        final location = await  gpsController.currentLocation;
                         // TODO: 2. Obten la precision de la lectura con gpsController.locationAccuracy.
+                        final accuracy = await gpsController.locationAccuracy;
                         // TODO: 3. Crea un objeto [TrackedLocation] con fecha actual [DateTime.now] y la precisio como texto [accuracy.name]
                         // TODO: 4. con el [controller] guarda ese objeto [saveLocation]
+                        controller.saveLocation(
+                          location: TrackedLocation(
+                            latitude: location.latitude, 
+                            longitude: location.longitude, 
+                            precision: accuracy.name, 
+                            timestamp: DateTime.now())
+                        );
                       },
                       child: const Text("Registrar Ubicacion"),
                     ),
@@ -55,6 +67,7 @@ class ContentPage extends GetView<LocationController> {
                                   'Fecha: ${location.timestamp.toIso8601String()}\n${location.precision.toUpperCase()}'),
                               trailing: IconButton(
                                 onPressed: () {
+                                  controller.deleteLocation(location:location);
                                   // TODO: elimina la ubicacion [location] usando el controlador [deleteLocation]
                                 },
                                 icon: const Icon(
@@ -74,6 +87,7 @@ class ContentPage extends GetView<LocationController> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ElevatedButton(
                       onPressed: () async {
+                        await controller.deleteAll();
                         // TODO: elimina todas las ubicaciones usando el controlador [deleteAll]
                       },
                       child: const Text("Eliminar Todos"),

@@ -20,6 +20,7 @@ class _LocationState extends State<PermissionPage> {
   void initState() {
     super.initState();
     controller = Get.find();
+    _permissionStatus = controller.permissionStatus;
     // TODO: Asigna a _permissionStatus el futuro que obtiene el estado de los permisos.;
   }
 
@@ -47,6 +48,9 @@ class _LocationState extends State<PermissionPage> {
                navega usando [Get.offAll] a [ContentPage] */
 
               // TODO: Mientras el futuro se completa muestra un CircularProgressIndicator
+               return const Center(
+                child: CircularProgressIndicator(),
+               );
             } else if (status == LocationPermission.unableToDetermine ||
                 status == LocationPermission.denied) {
               return Center(
@@ -54,19 +58,34 @@ class _LocationState extends State<PermissionPage> {
                     onPressed: () {
                       setState(() {
                         // TODO: Actualiza el futuro _permissionStatus con requestPermission
+                        _permissionStatus = controller.requestPermission();
                         // TODO: y setState para que el FutureBuilder vuelva a renderizarse.
+
                       });
                     },
                     child: const Text("Solicitar Permisos")),
               );
             } else {
               // TODO: Muestra un texto cuando el usuario a denegado el permiso permanentemente
+              return const Center (
+                child: Text (
+                  "Acceso a GPS denegado permanentemente por el usuario"
+                ),
+              );
             }
           } else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
             // TODO: Muestra un texto con el error si ocurre.
+            return Center (
+                child: Text (
+                  snapshot.error.toString(),
+                ),
+              );
           } else {
             // TODO: Mientras el futuro se completa muestra un CircularProgressIndicator
+            return const Center (
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),
